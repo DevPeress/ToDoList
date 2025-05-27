@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Senhas } from "../senha";
 import { Logins } from "../logins";
 
 export async function POST(req: Request) {
@@ -7,11 +6,6 @@ export async function POST(req: Request) {
   const { email, senha} = body;
   
   try {
-    const senhaHash = await Senhas("Hash", senha);
-  
-    if (typeof senhaHash !== "string") {
-      return new NextResponse("Erro ao gerar senha", { status: 500 });
-    }
 
     const criar = Logins("add",email, senha)
     console.log(criar)
