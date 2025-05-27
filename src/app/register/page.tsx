@@ -1,5 +1,6 @@
 'use client'
     
+import { useRouter } from "next/navigation";
 import { useState } from "react"
 
 interface Dados {
@@ -8,6 +9,8 @@ interface Dados {
 }
 
 export default function Register() {
+    const router = useRouter();
+    
     const [dados,setDados] = useState<Dados>({ email: "", senha: ""})
 
     const alterarDados = (tipo: string, valor: string) => {
@@ -43,7 +46,7 @@ export default function Register() {
         .then(data => { 
             if (data) {
                 if (data.status === 201) {
-                    return alert(data.msg)
+                    router.push('/pagina')
                 } else {
                     return alert(data.msg)
                 }
@@ -52,6 +55,10 @@ export default function Register() {
             }
          })
         .catch((err) => alert("Não foi encontrado os dados! Recarregue a Página"))
+    }
+
+    const login = () => {
+        router.push('/login')
     }
     
     return(
@@ -72,6 +79,7 @@ export default function Register() {
                         <h1 className="flex absolute w-[4vw] top-[11.6vw] left-[.5vw] text-[.5vw] text-[#6B7280] bg-white justify-center">Senha</h1> 
 
                     <button className="absolute top-[16vw] w-full h-[3vw] bg-[#5048E5] rounded text-[#FFFFFF] text-[1vw] items-center justify-center hover:scale-110" onClick={verifyLogin}>Continuar</button>
+                    <button className="absolute top-[20vw] w-full h-[3vw] bg-[#5048E5] rounded text-[#FFFFFF] text-[1vw] items-center justify-center hover:scale-110" onClick={login}>Login</button>
                 </div>
             </div>
         </div>
