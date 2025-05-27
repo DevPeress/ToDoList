@@ -1,70 +1,45 @@
 'use client'
 
 import { useState } from "react"
-import { useRouter } from 'next/navigation'
 
-interface Dados {
-    senha: string,
-    email: string
-}
+export default function Pagina() {
+    const [fazer, setFazer] = useState<string[]>([])
+    const [mensagem, setMensagem] = useState("")
 
-export default function Login() {
-    const [dados,setDados] = useState<Dados>({ email: "", senha: ""})
-    const router = useRouter();
+    const Adicionar = () => {
+        if (mensagem.trim() === "") return
 
-    const alterarDados = (tipo: string, valor: string) => {
-        setDados((prevDados) => ({
-            ...prevDados,
-            [tipo]: valor
-        }))
+        setFazer((prev) => [...prev, mensagem])
+        setMensagem("")
     }
 
-    const email = dados.email
-    const emailV = email.length > 4 && email.includes("@")
-
-    const senha = dados.senha
-    const senhaV = senha.length > 4
-
-    const login = () => {
-        if (!emailV || !senhaV) {
-           return alert("Email ou senha estão incorretos!")
-        }
-
-        fetch(`/api/login?email=${email}&senha=${senha}`)
-        .then(res => res.json())
-        .then(data => { 
-            if (data) {
-                if (data.status === 200) {
-                    router.push('/pagina');
-                } else {
-                    return alert(data.msg)
-                }
-            } else {
-                alert("E-mail ou Senha estão incorretos!")
-            }
-         })
-        .catch((err) => alert("Não foi encontrado os dados! Recarregue a Página"))
+    const Excluir = (indexToRemove: number) => {
+        setFazer((prev) => prev.filter((_, index) => index !== indexToRemove))
     }
 
     return (
-        <div className="absolute w-full min-h-screen bg-[#090E23] overflow-hidden">
-            <div className="flex absolute w-full min-h-screen bg-white items-center justify-center select-none">
-                <div className="flex absolute w-[20.833vw] h-[22.969vw]">
-                    <h1 className="absolute top-[2vw] text-[2vw] text-[#111827]">Bem-Vindo</h1>
-                    <h2 className="absolute top-[5vw] text-[1vw] text-[#6B7280]">Efetue seu Login</h2>
+        <div className="flex absolute w-full min-h-screen overflow-hidden items-center justify-center">
+            <div className="flex absolute w-full h-[2vw] top-[5vw] items-center justify-center">
+                <input
+                    type="text"
+                    className="flex w-[50vw] h-[2vw] bg-gray-500 rounded text-[1vw] text-white p-5"
+                    value={mensagem}
+                    onChange={(e) => setMensagem(e.target.value)}
+                />
+                <button className="flex w-[5vw] h-full ml-4 items-center justify-center bg-red-500 rounded p-5 hover:scale-110" onClick={Adicionar}>
+                    Adicionar
+                </button>
+            </div>
 
-                    <div className="absolute w-auto h-[1vw] top-[7vw] text-[.6vw] text-[#5048E5] border-b border-[#5048E5]">Email</div>
-                    <div className="absolute w-full h-[2.5vw] rounded top-[9vw] border-[#D1D5DB] border-1 overflow-hidden">
-                        <input className="absolute w-[98%] h-full outline-0 p-2" type="email" value={dados.email} onChange={(e) => alterarDados("email",e.target.value)} />
-                    </div>
-                    <h1 className="flex absolute w-[4vw] top-[8.6vw] left-[.5vw] text-[.5vw] text-[#6B7280] bg-white justify-center">Email</h1> 
-                        <div className="absolute w-full h-[2.5vw] rounded top-[12vw] border-[#D1D5DB] border-1 overflow-hidden">
-                            <input className="absolute w-[98%] h-full outline-0 p-2" type="password" value={dados.senha} onChange={(e) => alterarDados("senha",e.target.value)} />
+            <div className="flex flex-col absolute w-[50vw] h-auto top-[10vw] rounded flex-wrap space-y-2 items-center justify-center">
+                {fazer.map((item, index) => (
+                    <>
+                        <div key={index} className="flex relative w-full h-[2vw] right-[2.8vw] bg-gray-500 items-center justify-start pl-[1vw] text-white text-[1vw] rounded">
+                            <span className="flex w-full h-full overflow-hidden items-center">{item}</span>
+                            <button className="flex absolute w-[5vw] h-[2vw] right-[0vw] items-center justify-center bg-red-500 rounded p-5 hover:scale-110" onClick={() => Excluir(index)}>Excluir</button>
                         </div>
-                        <h1 className="flex absolute w-[4vw] top-[11.6vw] left-[.5vw] text-[.5vw] text-[#6B7280] bg-white justify-center">Senha</h1> 
-
-                    <button className="absolute top-[16vw] w-full h-[3vw] bg-[#5048E5] rounded text-[#FFFFFF] text-[1vw] items-center justify-center hover:scale-110" onClick={login}>Continuar</button>
-                </div>
+                    </> 
+                ))}
             </div>
         </div>
     )
